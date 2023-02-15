@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- for main -->
+    <string name="main_title">NekoMemo</string>
+    <string name="main_no_memos">No Memos</string>
+    <string name="main_search">Search Memos</string>
+    <string name="main_search_button">Search</string>
+
+    <!-- for create or update -->
+    <string name="memo_save">Save</string>
+    <string name="memo_title">Title</string>
+    <string name="memo_body">Contents</string>
+    <string name="memo_no_title">Please enter a title</string>
+    <string name="memo_saved">Saved Successfully</string>
+
+    <!-- for memo -->
+    <string name="memo_created_at">Created At</string>
+    <string name="memo_delete">Delete</string>
+    <string name="memo_alert_title">Delete Memo</string>
+    <string name="memo_alert_text">Are you sure you want to delete?</string>
+    <string name="memo_alert_confirm">Yes</string>
+    <string name="memo_alert_cancel">Cancel</string>
+</resources>

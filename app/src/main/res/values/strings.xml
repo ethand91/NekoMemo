@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name" translatable="false">NekoMemo</string>
+
+    <!-- for main -->
+    <string name="main_title">猫メモ</string>
+    <string name="main_no_memos">メモがありません</string>
+    <string name="main_search">メモ検索</string>
+    <string name="main_search_button">検索</string>
+
+    <!-- for create or update -->
+    <string name="memo_save">保存</string>
+    <string name="memo_title">タイトル</string>
+    <string name="memo_body">内容</string>
+    <string name="memo_no_title">タイトルを入力してください</string>
+    <string name="memo_saved">メモが保存されました</string>
+
+    <!-- for memo -->
+    <string name="memo_created_at">作成日</string>
+    <string name="memo_delete">削除</string>
+    <string name="memo_alert_title">メモ削除</string>
+    <string name="memo_alert_text">を削除して本当によろしいでしょうか？</string>
+    <string name="memo_alert_confirm">はい</string>
+    <string name="memo_alert_cancel">キャンセル</string>
+</resources>
