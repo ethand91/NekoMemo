@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.neko.nekomemo.R
+import com.neko.nekomemo.components.BannerAdView
 import com.neko.nekomemo.components.NekoOutlinedTextField
 import com.neko.nekomemo.components.NekoTopAppBar
 import com.neko.nekomemo.db.Memo
@@ -144,6 +145,12 @@ fun MemoCreate(
                     color = Color.White
                 )
             }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp)
+        ) {
+            BannerAdView()
         }
     }
 }

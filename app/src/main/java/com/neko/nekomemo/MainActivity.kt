@@ -1,5 +1,6 @@
 package com.neko.nekomemo
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -29,16 +30,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.neko.nekomemo.components.BannerAdView
 import com.neko.nekomemo.components.NekoSearchBar
 import com.neko.nekomemo.components.NekoTopAppBar
 import com.neko.nekomemo.db.Memo
 import com.neko.nekomemo.memo.MemoCreate
 import com.neko.nekomemo.memo.MemoItem
+import com.neko.nekomemo.pages.RemoveAdvertisement
 import com.neko.nekomemo.ui.theme.NekoMemoTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -164,6 +171,14 @@ class MainActivity : ComponentActivity() {
                      )
                 }
             }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp)
+            ) {
+                BannerAdView()
+            }
         }
     }
 
@@ -203,6 +218,10 @@ class MainActivity : ComponentActivity() {
                         loadMemos()
                     }
                 )
+            }
+
+            composable("/remove-ad") {
+                RemoveAdvertisement(navController = navController)
             }
         }
     }

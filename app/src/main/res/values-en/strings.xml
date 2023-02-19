@@ -1,4 +1,6 @@
 <resources>
+    <!-- for top bar -->
+    <string name="top_bar_advertisement">Remove Ads</string>
 
     <!-- for main -->
     <string name="main_title">NekoMemo</string>
@@ -20,4 +22,10 @@
     <string name="memo_alert_text">Are you sure you want to delete?</string>
     <string name="memo_alert_confirm">Yes</string>
     <string name="memo_alert_cancel">Cancel</string>
+
+    <!-- for remove advertisement -->
+    <string name="remove_ad_title">Remove Ads</string>
+    <string name="remove_ad_line_1">Press the button below to remove advertisements</string>
+    <string name="remove_ad_line_2">Any support is greatly appreciated</string>
+    <string name="remove_ad_button">Pay $5</string>
 </resources>

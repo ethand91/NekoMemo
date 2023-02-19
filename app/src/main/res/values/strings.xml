@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name" translatable="false">NekoMemo</string>
+    <string name="test_ad" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="bottom_ad" translatable="false">ca-app-pub-5474571366428116/2689695177</string>
+
+    <!-- for top bar -->
+    <string name="top_bar_advertisement">広告を消す</string>
 
     <!-- for main -->
     <string name="main_title">猫メモ</string>
@@ -21,4 +26,10 @@
     <string name="memo_alert_text">を削除して本当によろしいでしょうか？</string>
     <string name="memo_alert_confirm">はい</string>
     <string name="memo_alert_cancel">キャンセル</string>
+
+    <!-- for remove advertisement -->
+    <string name="remove_ad_title">広告を削除</string>
+    <string name="remove_ad_line_1">広告を削除するのには以下のボタンを押してください</string>
+    <string name="remove_ad_line_2">サポートをして頂いて誠に有難うございます</string>
+    <string name="remove_ad_button">５００円を払う</string>
 </resources>
