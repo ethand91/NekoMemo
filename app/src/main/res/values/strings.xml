@@ -32,4 +32,18 @@
     <string name="remove_ad_line_1">広告を削除するのには以下のボタンを押してください</string>
     <string name="remove_ad_line_2">サポートをして頂いて誠に有難うございます</string>
     <string name="remove_ad_button">５００円を払う</string>
+    <string name="remove_ad_consume_button">広告を削除</string>
+
+    <!-- for billing -->
+    <string name="status_name">ステータス</string>
+    <string name="searching_products">商品を検索中</string>
+    <string name="billing_init">初期中</string>
+    <string name="billing_connection_ok">ストアとの接続が成功しました</string>
+    <string name="billing_connection_failed">ストアとの接続が失敗しました</string>
+    <string name="billing_connection_disconnect">ストアとの接続が切断されました</string>
+    <string name="no_products">商品を見つかりませんでした</string>
+    <string name="purchase_cancelled">課金がキャンセルされました</string>
+    <string name="purchase_error">課金が失敗しました</string>
+    <string name="purchase_complete">課金が成功</string>
+    <string name="purchase_consumed">利用が成功</string>
 </resources>

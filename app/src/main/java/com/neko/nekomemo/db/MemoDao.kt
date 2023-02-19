@@ -5,7 +5,7 @@ import androidx.room.*
 
 @Dao
 interface MemoDao {
-    @Query("select * from ${MemoDatabase.NAME} order by created_at asc")
+    @Query("select * from ${MemoDatabase.NAME} order by created_at desc")
     fun getAll(): MutableList<Memo>
 
     @Query("select * from ${MemoDatabase.NAME} where id = :id")

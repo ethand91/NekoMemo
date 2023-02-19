@@ -14,10 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -39,6 +36,7 @@ import androidx.navigation.navArgument
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.neko.nekomemo.billing.BillingHelper
 import com.neko.nekomemo.components.BannerAdView
 import com.neko.nekomemo.components.NekoSearchBar
 import com.neko.nekomemo.components.NekoTopAppBar
@@ -61,6 +59,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val billingHelper = BillingHelper(this)
+        billingHelper.billingSetup()
+
         setContent {
             NekoMemoTheme {
                 LaunchedEffect(key1 = true, block = {
@@ -72,14 +74,16 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MainNavigation(memoList = memoList)
+                    MainNavigation(
+                        memoList = memoList,
+                        billingHelper = billingHelper
+                    )
                 }
             }
         }
     }
 
     private fun loadMemos() {
-        Log.d("Main", "loadMemos")
         scope.launch {
             withContext(Dispatchers.Default) {
                 dao.getAll().forEach{ memo ->
@@ -100,22 +104,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun deleteAll() {
-        scope.launch {
-            withContext(Dispatchers.Default) {
-                dao.deleteAll()
-
-                memoList.clear()
-            }
-        }
-    }
-
     @Composable
     fun MainScreen(
         navController: NavController,
-        memoList: SnapshotStateList<Memo>
+        memoList: SnapshotStateList<Memo>,
+        billingHelper: BillingHelper
     ) {
         val context = LocalContext.current
+        val isConsumed = billingHelper.isConsumed.collectAsState(false)
 
         Column {
             NekoTopAppBar(
@@ -172,25 +168,29 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp)
-            ) {
-                BannerAdView()
+            if (!isConsumed.value) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp)
+                ) {
+                    BannerAdView()
+                }
+
             }
         }
     }
 
     @Composable
-    fun MainNavigation(memoList: SnapshotStateList<Memo>) {
+    fun MainNavigation(memoList: SnapshotStateList<Memo>, billingHelper: BillingHelper) {
         val navController = rememberNavController()
 
         NavHost(navController = navController, startDestination = "/main") {
             composable("/main") {
                 MainScreen(
                     navController = navController,
-                    memoList = memoList
+                    memoList = memoList,
+                    billingHelper = billingHelper
                 )
             }
 
@@ -202,7 +202,8 @@ class MainActivity : ComponentActivity() {
                     onUpdateList = {
                         memoList.clear()
                         loadMemos()
-                    }
+                    },
+                    billingHelper = billingHelper
                 )
             }
 
@@ -216,12 +217,16 @@ class MainActivity : ComponentActivity() {
                     onUpdateList = {
                         memoList.clear()
                         loadMemos()
-                    }
+                    },
+                    billingHelper = billingHelper
                 )
             }
 
             composable("/remove-ad") {
-                RemoveAdvertisement(navController = navController)
+                RemoveAdvertisement(
+                    navController = navController,
+                    billingHelper = billingHelper
+                )
             }
         }
     }

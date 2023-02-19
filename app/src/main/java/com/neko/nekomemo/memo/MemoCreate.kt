@@ -11,10 +11,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +24,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.neko.nekomemo.R
+import com.neko.nekomemo.billing.BillingHelper
 import com.neko.nekomemo.components.BannerAdView
 import com.neko.nekomemo.components.NekoOutlinedTextField
 import com.neko.nekomemo.components.NekoTopAppBar
@@ -43,13 +41,15 @@ fun MemoCreate(
     dao: MemoDao,
     navController: NavController,
     id: Int?,
-    onUpdateList: () -> Unit = {}
+    onUpdateList: () -> Unit = {},
+    billingHelper: BillingHelper
 ) {
     val scope = MainScope()
     val context = LocalContext.current
     val memo = remember {
         mutableStateOf(Memo())
     }
+    val showAds = billingHelper.isConsumed.collectAsState(false)
 
     val title = remember {
         mutableStateOf(TextFieldValue(memo.value.title))
@@ -147,10 +147,14 @@ fun MemoCreate(
             }
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp)
-        ) {
-            BannerAdView()
+        if (!showAds.value) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp)
+            ) {
+                BannerAdView()
+            }
         }
     }
 }

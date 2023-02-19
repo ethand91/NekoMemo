@@ -2,6 +2,7 @@ package com.neko.nekomemo.billing
 
 import android.app.Activity
 import com.android.billingclient.api.*
+import com.neko.nekomemo.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,7 @@ data class BillingHelper(
 
     private val productId = "remove_ads"
 
-    private val _productName = MutableStateFlow("Searching...")
+    private val _productName = MutableStateFlow(activity.getString(R.string.searching_products))
     val productName = _productName.asStateFlow()
 
     private val _buyEnabled = MutableStateFlow(false)
@@ -28,7 +29,10 @@ data class BillingHelper(
     private val _consumeEnabled = MutableStateFlow(false)
     val consumeEnabled = _consumeEnabled.asStateFlow()
 
-    private val _statusText = MutableStateFlow("Initializing...")
+    private val _isConsumed = MutableStateFlow(false)
+    val isConsumed = _isConsumed.asStateFlow()
+
+    private val _statusText = MutableStateFlow(activity.getString(R.string.billing_init))
     val statusText = _statusText.asStateFlow()
 
     fun billingSetup() {
@@ -42,16 +46,16 @@ data class BillingHelper(
                 billingResult: BillingResult
             ) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    _statusText.value = "Billing Client Connected"
+                    _statusText.value = activity.getString(R.string.billing_connection_ok)
                     queryProduct(productId)
                     reloadPurchase()
                 } else {
-                    _statusText.value = "Billing client connection failed"
+                    _statusText.value = activity.getString(R.string.billing_connection_failed)
                 }
             }
 
             override fun onBillingServiceDisconnected() {
-                _statusText.value = "Billing client connection lost"
+                _statusText.value =  activity.getString(R.string.billing_connection_disconnect)
             }
         })
     }
@@ -77,7 +81,7 @@ data class BillingHelper(
                 productDetails = productDetailsList[0]
                 _productName.value = "Product: ${productDetails.name}"
             } else {
-                _statusText.value = "No matching products found"
+                _statusText.value = activity.getString(R.string.no_products)
                 _buyEnabled.value = false
             }
         }
@@ -106,9 +110,10 @@ data class BillingHelper(
             val result = billingClient.consumePurchase(consumeParams)
 
             if (result.billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                _statusText.value = "Purchase Consumed"
-                _buyEnabled.value = true
-                _consumeEnabled.value = true
+                _statusText.value = activity.getString(R.string.purchase_consumed)
+                _buyEnabled.value = false
+                _consumeEnabled.value = false
+                _isConsumed.value = true
             }
         }
     }
@@ -119,9 +124,9 @@ data class BillingHelper(
                 completePurchase(purchase)
             }
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
-            _statusText.value = "Purchase Canceled"
+            _statusText.value = activity.getString(R.string.purchase_cancelled)
         } else {
-            _statusText.value = "Purchase Error"
+            _statusText.value = activity.getString(R.string.purchase_error)
         }
     }
 
@@ -131,7 +136,8 @@ data class BillingHelper(
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
             _buyEnabled.value = false
             _consumeEnabled.value = true
-            _statusText.value = "Purchase Completed"
+            _statusText.value = activity.getString(R.string.purchase_complete)
+            _isConsumed.value = true
         }
     }
 
@@ -146,12 +152,12 @@ data class BillingHelper(
         )
     }
 
-    private val purchaseListener = PurchasesResponseListener { billingResult, purchases ->
+    private val purchaseListener = PurchasesResponseListener { _, purchases ->
         if (purchases.isNotEmpty()) {
             purchase = purchases.first()
             _buyEnabled.value = false
             _consumeEnabled.value = false
-            _statusText.value = "Previous Purchase Found"
+            _isConsumed.value = true
         } else {
             _buyEnabled.value = true
             _consumeEnabled.value = false

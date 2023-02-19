@@ -28,4 +28,18 @@
     <string name="remove_ad_line_1">Press the button below to remove advertisements</string>
     <string name="remove_ad_line_2">Any support is greatly appreciated</string>
     <string name="remove_ad_button">Pay $5</string>
+    <string name="remove_ad_consume_button">Remove Ads</string>
+
+    <!-- for billing -->
+    <string name="status_name">Status</string>
+    <string name="searching_products">Searching...</string>
+    <string name="billing_init">Initializing</string>
+    <string name="billing_connection_ok">Store Connection OK</string>
+    <string name="billing_connection_failed">Store Connection Failed</string>
+    <string name="billing_connection_disconnect">Store Connection Disconnected</string>
+    <string name="no_products">No Products Found</string>
+    <string name="purchase_cancelled">Payment Cancelled</string>
+    <string name="purchase_error">Payment Error</string>
+    <string name="purchase_complete">Payment Success</string>
+    <string name="purchase_consumed">Consume Success</string>
 </resources>
