@@ -34,8 +34,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import com.neko.nekomemo.billing.BillingHelper
 import com.neko.nekomemo.components.BannerAdView
 import com.neko.nekomemo.components.NekoSearchBar
@@ -56,12 +54,16 @@ class MainActivity : ComponentActivity() {
     private var memoList = mutableStateListOf<Memo>()
     private var filteredList = mutableStateListOf<Memo>()
     private var scope = MainScope()
+    private val context = this
 
+    @SuppressLint("VisibleForTests")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val billingHelper = BillingHelper(this)
         billingHelper.billingSetup()
+
+        val adRequest = AdRequest.Builder().build()
 
         setContent {
             NekoMemoTheme {
@@ -203,7 +205,8 @@ class MainActivity : ComponentActivity() {
                         memoList.clear()
                         loadMemos()
                     },
-                    billingHelper = billingHelper
+                    billingHelper = billingHelper,
+                    activity = context
                 )
             }
 
@@ -218,7 +221,8 @@ class MainActivity : ComponentActivity() {
                         memoList.clear()
                         loadMemos()
                     },
-                    billingHelper = billingHelper
+                    billingHelper = billingHelper,
+                    activity = context
                 )
             }
 

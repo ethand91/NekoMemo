@@ -1,5 +1,8 @@
 package com.neko.nekomemo.memo
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.android.gms.ads.*
 import com.neko.nekomemo.R
 import com.neko.nekomemo.billing.BillingHelper
 import com.neko.nekomemo.components.BannerAdView
@@ -34,6 +38,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.neko.nekomemo.components.FullScreenAdView
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -42,7 +49,8 @@ fun MemoCreate(
     navController: NavController,
     id: Int?,
     onUpdateList: () -> Unit = {},
-    billingHelper: BillingHelper
+    billingHelper: BillingHelper,
+    activity: Activity
 ) {
     val scope = MainScope()
     val context = LocalContext.current
@@ -50,12 +58,77 @@ fun MemoCreate(
         mutableStateOf(Memo())
     }
     val showAds = billingHelper.isConsumed.collectAsState(false)
+    var interstitialAd: InterstitialAd? = null
+    val unitId = context.getString(R.string.video_test_ad)
 
     val title = remember {
         mutableStateOf(TextFieldValue(memo.value.title))
     }
     val body = remember {
         mutableStateOf(TextFieldValue(memo.value.body))
+    }
+    val isAdShow = remember {
+        mutableStateOf(false)
+    }
+
+    @SuppressLint("VisibleForTests")
+    fun loadAd() {
+        InterstitialAd.load(
+            context,
+            unitId,
+            AdRequest.Builder().build(),
+            object: InterstitialAdLoadCallback () {
+                override fun onAdFailedToLoad(p0: LoadAdError) {
+                    super.onAdFailedToLoad(p0)
+                    interstitialAd = null
+                    Log.e("Memo", p0.message)
+                }
+
+                override fun onAdLoaded(p0: InterstitialAd) {
+                    Log.d("Memo", "ad loaded" + p0.toString())
+                    interstitialAd = p0
+                }
+            }
+        )
+    }
+
+    fun showAd(
+        activity: Activity,
+        onAdDismissed: () -> Unit
+    ) {
+        scope.launch {
+            withContext(Dispatchers.Main) {
+                Log.d("Memo", "Show Ad " + interstitialAd.toString())
+                if (interstitialAd != null) {
+                    interstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                        override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                            super.onAdFailedToShowFullScreenContent(p0)
+                            interstitialAd = null
+
+                            Log.e("Memo", p0.message)
+                        }
+
+                        override fun onAdDismissedFullScreenContent() {
+                            super.onAdDismissedFullScreenContent()
+                            interstitialAd = null
+
+                            loadAd()
+                            onAdDismissed()
+                            Log.d("Memo", "Ad Showed")
+                        }
+                    }
+
+                    interstitialAd?.show(activity)
+                }
+            }
+        }
+
+        onAdDismissed()
+    }
+
+    fun removeAd() {
+        interstitialAd?.fullScreenContentCallback = null
+        interstitialAd = null
     }
 
     LaunchedEffect(key1 = Unit, block = {
@@ -69,6 +142,10 @@ fun MemoCreate(
                     body.value = TextFieldValue(previousMemo.body)
                 }
             }
+        }
+
+        withContext(Dispatchers.Main) {
+            loadAd()
         }
     })
 
@@ -126,8 +203,6 @@ fun MemoCreate(
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context, context.getString(R.string.memo_saved), Toast.LENGTH_SHORT).show()
                                 navController.navigate("/main")
-
-                                onUpdateList()
                             }
                         }
                     }
@@ -145,6 +220,16 @@ fun MemoCreate(
                     color = Color.White
                 )
             }
+        }
+
+        if (isAdShow.value) {
+            FullScreenAdView(
+                isDebug = true,
+                onClose = {
+                    isAdShow.value = false
+                    navController.navigate("/main")
+                }
+            )
         }
 
         if (!showAds.value) {
